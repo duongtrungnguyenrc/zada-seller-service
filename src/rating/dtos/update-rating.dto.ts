@@ -1,5 +1,9 @@
-import { PartialType } from "@nestjs/mapped-types";
+import { ApiProperty } from "@nestjs/swagger";
 
-import { CreateRatingDto } from "./create-rating.dto";
+export class UpdateRatingDto {
+  @ApiProperty()
+  stars: number;
 
-export class UpdateRatingDto extends PartialType(CreateRatingDto) {}
+  @ApiProperty()
+  content: string;
+}

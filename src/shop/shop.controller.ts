@@ -11,16 +11,26 @@ import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
 } from "@nestjs/swagger";
-import { AuthTokenPayload, ResponseVM, UnauthorizedExceptionVM, NotFoundExceptionVM, BadRequestExceptionVM, ForbiddenExceptionVM } from "@duongtrungnguyen/micro-commerce";
-import { Controller, Get, Post, Body, Put, Param, Delete } from "@nestjs/common";
+import {
+  AuthTokenPayload,
+  ResponseVM,
+  UnauthorizedExceptionVM,
+  NotFoundExceptionVM,
+  BadRequestExceptionVM,
+  ForbiddenExceptionVM,
+  HttpExceptionsFilter,
+  HttpResponse,
+} from "@duongtrungnguyen/micro-commerce";
+import { Controller, Get, Post, Body, Put, Param, Delete, UseFilters } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 
 import { ShopDetailsResponseVM, ShopResponseVM } from "./vms";
 import { CreateShopDto, UpdateShopDto } from "./dtos";
 import { ShopService } from "./shop.service";
 
-@ApiTags("Shops")
+@ApiTags("Shop")
 @Controller()
+@UseFilters(new HttpExceptionsFilter())
 export class ShopController {
   constructor(
     private readonly shopService: ShopService,
@@ -37,10 +47,7 @@ export class ShopController {
   async create(@AuthTokenPayload("sub") userId: string, @Body() data: CreateShopDto): Promise<ShopResponseVM> {
     const created = await this.shopService.create(userId, data);
 
-    return {
-      message: this.i18n.t("shop.create-success"),
-      data: created,
-    };
+    return HttpResponse.created(this.i18n.t("shop.create-success"), created);
   }
 
   @Get()
@@ -52,10 +59,7 @@ export class ShopController {
   async getShops(@AuthTokenPayload("sub") userId: string): Promise<ShopDetailsResponseVM> {
     const shops = await this.shopService.getShops(userId);
 
-    return {
-      message: this.i18n.t("shop.fetch-success"),
-      data: shops,
-    };
+    return HttpResponse.ok(this.i18n.t("shop.fetch-success"), shops);
   }
 
   @Put(":id")
@@ -71,10 +75,7 @@ export class ShopController {
   async update(@AuthTokenPayload("sub") userId: string, @Param("id") id: string, @Body() dto: UpdateShopDto): Promise<ShopResponseVM> {
     const updated = await this.shopService.update({ id, userId }, dto);
 
-    return {
-      message: this.i18n.t("shop.update-success"),
-      data: updated,
-    };
+    return HttpResponse.ok(this.i18n.t("shop.update-success"), updated);
   }
 
   @Delete(":id")
@@ -88,8 +89,6 @@ export class ShopController {
   async delete(@AuthTokenPayload("sub") userId: string, @Param("id") id: string): Promise<ResponseVM> {
     await this.shopService.delete({ userId, id });
 
-    return {
-      message: this.i18n.t("shop.delete-success"),
-    };
+    return HttpResponse.ok(this.i18n.t("shop.delete-success"));
   }
 }

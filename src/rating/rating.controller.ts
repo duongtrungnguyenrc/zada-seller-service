@@ -20,16 +20,19 @@ import {
   ForbiddenExceptionVM,
   UnauthorizedExceptionVM,
   BadRequestExceptionVM,
+  HttpExceptionsFilter,
+  HttpResponse,
 } from "@duongtrungnguyen/micro-commerce";
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters } from "@nestjs/common";
 import { I18nService } from "nestjs-i18n";
 
 import { RatingDetailsResponseVM, RatingResponseVM } from "./vms";
 import { CreateRatingDto, UpdateRatingDto } from "./dtos";
 import { RatingService } from "./rating.service";
 
-@ApiTags("Ratings")
+@ApiTags("Rating")
 @Controller("ratings")
+@UseFilters(new HttpExceptionsFilter())
 export class RatingController {
   constructor(
     private readonly ratingService: RatingService,
@@ -48,10 +51,7 @@ export class RatingController {
   async create(@AuthTokenPayload("sub") userId: string, @Param("id") shopId: string, @Body() data: CreateRatingDto): Promise<RatingResponseVM> {
     const rating = await this.ratingService.create(userId, shopId, data);
 
-    return {
-      message: this.i18nService.t("rating.created-success"),
-      data: rating,
-    };
+    return HttpResponse.created(this.i18nService.t("rating.created-success"), rating);
   }
 
   @Get()
@@ -63,10 +63,7 @@ export class RatingController {
   async getRatingDetails(@AuthTokenPayload("sub") userId: string, @Paging() pageable: PagingDto): Promise<RatingDetailsResponseVM> {
     const ratings = await this.ratingService.getRatingDetails(userId ? { userId } : {}, pageable);
 
-    return {
-      message: this.i18nService.t("rating.get-details-success"),
-      data: ratings,
-    };
+    return HttpResponse.ok(this.i18nService.t("rating.get-details-success"), ratings);
   }
 
   @Put(":id")
@@ -81,10 +78,7 @@ export class RatingController {
   async updateRating(@AuthTokenPayload("sub") userId: string, @Param("id") id: string, @Body() data: UpdateRatingDto): Promise<RatingResponseVM> {
     const updatedRating = await this.ratingService.update(userId, id, data);
 
-    return {
-      message: this.i18nService.t("rating.update-success"),
-      data: updatedRating,
-    };
+    return HttpResponse.ok(this.i18nService.t("rating.update-success"), updatedRating);
   }
 
   @Delete(":id")
@@ -98,8 +92,6 @@ export class RatingController {
   async delete(@AuthTokenPayload("sub") userId: string, @Param("id") id: string): Promise<ResponseVM> {
     await this.ratingService.remove(userId, id);
 
-    return {
-      message: this.i18nService.t("rating.delete-success"),
-    };
+    return HttpResponse.ok(this.i18nService.t("rating.delete-success"));
   }
 }

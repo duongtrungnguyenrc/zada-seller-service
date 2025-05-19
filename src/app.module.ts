@@ -5,9 +5,9 @@ import { Module } from "@nestjs/common";
 import * as path from "path";
 
 import { NatsClientModule } from "~nats-client";
+import { UserClientModule } from "~user-client";
 import { RatingModule } from "~rating";
 import { ShopModule } from "~shop";
-import { UserClientModule } from "~user-client";
 
 @Module({
   imports: [
