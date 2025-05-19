@@ -1,0 +1,7 @@
+{
+  "create-success": "Shop created successfully.",
+  "fetch-success": "Fetched shop list successfully.",
+  "update-success": "Shop updated successfully.",
+  "delete-success": "Shop deleted successfully.",
+  "not-found": "Shop not found."
+}

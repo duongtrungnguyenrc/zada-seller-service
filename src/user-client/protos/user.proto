@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package user;
+
+service UserService {
+  rpc create (CreateUserRequest) returns (UserResponse);
+  rpc update (UpdateUserRequest) returns (UserResponse);
+  rpc get (GetUserRequest) returns (UserResponse);
+  rpc getUsers (GetUsersRequest) returns (UsersResponse);
+}
+
+// --- Request DTOs ---
+
+message CreateUserDto {
+  string fullName = 1;
+  string email = 2;
+  optional string avatarUrl = 3;
+  string passwordHash = 4;
+  string phoneNumber = 5;
+}
+
+message UpdateUserDto {
+  optional string fullName = 1;
+  optional string avatarUrl = 2;
+  optional string passwordHash = 3;
+  optional string phoneNumber = 4;
+  optional bool isVerified = 5;
+  optional bool isActive = 6;
+}
+
+message UserFilterDto {
+  optional string id = 1;
+  optional string email = 2;
+}
+
+message UsersFilterDto {
+  repeated string ids = 1;
+}
+
+
+/// --- Requests---
+
+message CreateUserRequest {
+  CreateUserDto data = 1;
+}
+
+message UpdateUserRequest {
+  UserFilterDto filter = 1;
+  UpdateUserDto updates = 2;
+}
+
+message GetUserRequest {
+  UserFilterDto filter = 1;
+  repeated string select = 2;
+}
+
+message GetUsersRequest {
+  UsersFilterDto filter = 1;
+  repeated string select = 2;
+}
+
+// --- Response VMs ---
+
+message UserVM {
+  string id = 1;
+  string email = 2;
+  optional string avatarUrl = 3;
+  string phoneNumber = 4;
+  string fullName = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+  string passwordHash = 8;
+  bool isActive = 9;
+  bool isVerified = 10;
+}
+
+// --- Responses ---
+
+message UserResponse {
+  optional UserVM data = 1;
+}
+
+message UsersResponse {
+  repeated UserVM data = 1;
+}
