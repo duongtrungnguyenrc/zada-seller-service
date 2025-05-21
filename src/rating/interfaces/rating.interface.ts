@@ -1,9 +1,9 @@
-import { IShop } from "~shop";
+import { ISeller } from "~seller";
 
 export interface IRating {
   id: string;
   userId: string;
-  shop: IShop;
+  seller: ISeller;
   stars: number;
   content: string;
   createdAt: Date;

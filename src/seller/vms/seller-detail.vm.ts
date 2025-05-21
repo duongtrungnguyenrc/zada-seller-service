@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 import { UserVM } from "~user-client";
 
-export class ShopDetailVM {
+export class SellerDetailVM {
   @ApiProperty()
   id: string;
 

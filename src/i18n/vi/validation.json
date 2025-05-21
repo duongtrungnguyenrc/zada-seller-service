@@ -1,6 +1,6 @@
 {
   "invalid-user-id": "ID người dùng không hợp lệ.",
-  "invalid-shop-name": "Tên cửa hàng không hợp lệ.",
+  "invalid-seller-name": "Tên cửa hàng không hợp lệ.",
   "invalid-description": "Mô tả không hợp lệ.",
   "invalid-logo-url": "URL logo không hợp lệ.",
   "invalid-tax-id": "Mã số thuế không hợp lệ.",

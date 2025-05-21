@@ -1,4 +1,4 @@
-export class IShop {
+export class ISeller {
   id: string;
   userId: string;
   name: string;

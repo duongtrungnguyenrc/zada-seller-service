@@ -31,6 +31,7 @@ export interface UpdateUserDto {
 export interface UserFilterDto {
   id?: string | undefined;
   email?: string | undefined;
+  phoneNumber?: string | undefined;
 }
 
 export interface UsersFilterDto {
@@ -47,7 +48,7 @@ export interface UpdateUserRequest {
 }
 
 export interface GetUserRequest {
-  filter: UserFilterDto | undefined;
+  filters: UserFilterDto[];
   select: string[];
 }
 

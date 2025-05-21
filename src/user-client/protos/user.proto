@@ -33,6 +33,7 @@ message UpdateUserDto {
 message UserFilterDto {
   optional string id = 1;
   optional string email = 2;
+  optional string phoneNumber = 3;
 }
 
 message UsersFilterDto {
@@ -52,7 +53,7 @@ message UpdateUserRequest {
 }
 
 message GetUserRequest {
-  UserFilterDto filter = 1;
+  repeated UserFilterDto filters = 1;
   repeated string select = 2;
 }
 

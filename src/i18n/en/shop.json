@@ -1,7 +1,7 @@
 {
-  "create-success": "Shop created successfully.",
-  "fetch-success": "Fetched shop list successfully.",
-  "update-success": "Shop updated successfully.",
-  "delete-success": "Shop deleted successfully.",
-  "not-found": "Shop not found."
+  "create-success": "Seller created successfully.",
+  "fetch-success": "Fetched seller list successfully.",
+  "update-success": "Seller updated successfully.",
+  "delete-success": "Seller deleted successfully.",
+  "not-found": "Seller not found."
 }

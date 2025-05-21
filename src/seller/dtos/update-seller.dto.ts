@@ -1,10 +1,10 @@
 import { IsBoolean, IsOptional, IsString, IsUrl } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
-export class UpdateShopDto {
+export class UpdateSellerDto {
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsString({ message: "validation.invalid-shop-name" })
+  @IsString({ message: "validation.invalid-seller-name" })
   name?: string;
 
   @ApiProperty({ required: false })

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class ShopVM {
+export class SellerVM {
   @ApiProperty()
   id: string;
 

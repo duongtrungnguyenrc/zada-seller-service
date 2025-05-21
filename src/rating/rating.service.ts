@@ -5,7 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { I18nService } from "nestjs-i18n";
 
 import { GetUsersRequest, UserClientService, UsersResponse } from "~user-client";
-import { ShopService } from "~shop";
+import { SellerService } from "~seller";
 
 import { CreateRatingDto, UpdateRatingDto } from "./dtos";
 import { RatingDetailVM, RatingVM } from "./vms";
@@ -18,18 +18,18 @@ export class RatingService {
     private readonly ratingRepository: Repository<RatingEntity>,
     private readonly userClientService: UserClientService,
     private readonly i18nService: I18nService,
-    private readonly shopService: ShopService,
+    private readonly sellerService: SellerService,
   ) {}
 
-  async create(userId: string, shopId: string, data: CreateRatingDto): Promise<RatingVM> {
-    const shop = await this.shopService.get({ id: shopId });
-    if (!shop) {
-      throw new BadRequestException(this.i18nService.t("shop.not-found"));
+  async create(userId: string, sellerId: string, data: CreateRatingDto): Promise<RatingVM> {
+    const seller = await this.sellerService.get({ id: sellerId });
+    if (!seller) {
+      throw new BadRequestException(this.i18nService.t("seller.not-found"));
     }
 
     const rating = this.ratingRepository.create({
       userId,
-      shop: { id: shopId },
+      seller: { id: sellerId },
       ...data,
     });
 
@@ -40,8 +40,8 @@ export class RatingService {
     const [ratings, ratingCount] = await Promise.all([
       this.ratingRepository
         .createQueryBuilder("ratings")
-        .leftJoinAndSelect("ratings.shop", "shop")
-        .select(["ratings.id", "ratings.userId", "ratings.stars", "ratings.content", "ratings.createdAt", "shop.id", "shop.name", "shop.logoUrl"])
+        .leftJoinAndSelect("ratings.seller", "seller")
+        .select(["ratings.id", "ratings.userId", "ratings.stars", "ratings.content", "ratings.createdAt", "seller.id", "seller.name", "seller.logoUrl"])
         .where(filter ?? {})
         .skip((pageable.page - 1) * pageable.size)
         .take(pageable.size)
@@ -79,7 +79,7 @@ export class RatingService {
       throw new NotFoundException(this.i18nService.t("rating.not-found"));
     }
     if (rating.userId !== userId) {
-      throw new ForbiddenException(this.i18nService.t("shop.forbidden-access"));
+      throw new ForbiddenException(this.i18nService.t("seller.forbidden-access"));
     }
 
     Object.assign(rating, data);

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-import { IShop } from "~shop";
+import { ISeller } from "~seller";
 
 export class RatingVM {
   @ApiProperty()
@@ -10,7 +10,7 @@ export class RatingVM {
   userId: string;
 
   @ApiProperty()
-  shop: IShop;
+  seller: ISeller;
 
   @ApiProperty()
   stars: number;

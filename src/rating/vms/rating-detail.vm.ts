@@ -1,7 +1,7 @@
 import { ApiProperty, OmitType } from "@nestjs/swagger";
 
 import { UserVM } from "~user-client";
-import { IShop } from "~shop";
+import { ISeller } from "~seller";
 
 import { RatingVM } from "./rating.vm";
 
@@ -27,7 +27,7 @@ export class RatingDetailVM extends OmitType(RatingVM, ["userId"] as const) {
       logoUrl: "",
     },
   })
-  shop: IShop;
+  seller: ISeller;
 
   @ApiProperty()
   stars: number;

@@ -40,16 +40,16 @@ export class RatingController {
   ) {}
 
   @Post(":id")
-  @ApiOperation({ summary: "Create rating for shop" })
+  @ApiOperation({ summary: "Create rating for seller" })
   @ApiBearerAuth()
-  @ApiParam({ name: "id", description: "Shop ID" })
+  @ApiParam({ name: "id", description: "Seller ID" })
   @ApiCreatedResponse({ type: RatingResponseVM })
   @ApiBadRequestResponse({ description: "Validation failed", type: BadRequestExceptionVM })
-  @ApiNotFoundResponse({ description: "Shop not found", type: NotFoundExceptionVM })
+  @ApiNotFoundResponse({ description: "Seller not found", type: NotFoundExceptionVM })
   @ApiUnauthorizedResponse({ description: "Unauthorized", type: UnauthorizedExceptionVM })
   @ApiForbiddenResponse({ description: "User forbidden to create", type: ForbiddenExceptionVM })
-  async create(@AuthTokenPayload("sub") userId: string, @Param("id") shopId: string, @Body() data: CreateRatingDto): Promise<RatingResponseVM> {
-    const rating = await this.ratingService.create(userId, shopId, data);
+  async create(@AuthTokenPayload("sub") userId: string, @Param("id") sellerId: string, @Body() data: CreateRatingDto): Promise<RatingResponseVM> {
+    const rating = await this.ratingService.create(userId, sellerId, data);
 
     return HttpResponse.created(this.i18nService.t("rating.created-success"), rating);
   }

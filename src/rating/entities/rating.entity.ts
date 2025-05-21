@@ -1,19 +1,19 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-import { IShop, ShopEntity } from "~shop";
+import { ISeller, SellerEntity } from "~seller";
 
 import { IRating } from "../interfaces";
 
 @Entity("ratings")
 export class RatingEntity implements IRating {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("identity")
   id: string;
 
-  @Column({ type: "uuid" })
+  @Column({ length: 20 })
   userId: string;
 
-  @ManyToOne(() => ShopEntity, (shop) => shop.ratings)
-  shop: IShop;
+  @ManyToOne(() => SellerEntity, (seller) => seller.ratings)
+  seller: ISeller;
 
   @Column({ type: "int", default: 5 })
   stars: number;

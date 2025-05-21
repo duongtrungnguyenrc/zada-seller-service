@@ -1,9 +1,9 @@
 import { IsBoolean, IsString, IsUrl } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
-export class CreateShopDto {
+export class CreateSellerDto {
   @ApiProperty()
-  @IsString({ message: "validation.invalid-shop-name" })
+  @IsString({ message: "validation.invalid-seller-name" })
   name: string;
 
   @ApiProperty()
