@@ -1,27 +1,30 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { RepositoryService } from "@duongtrungnguyen/micro-commerce";
+import { ForbiddenException, Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { InjectRepository } from "@nestjs/typeorm";
 import { I18nService } from "nestjs-i18n";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { Repository } from "typeorm";
 
-import { NATS_CLIENT } from "~nats-client";
 import { GetUsersRequest, UserClientService, UsersResponse } from "~user-client";
+import { NATS_CLIENT } from "~nats-client";
 
 import { CreateSellerDto, UpdateSellerDto } from "./dtos";
 import { SellerDetailVM, SellerVM } from "./vms";
 import { SellerEntity } from "./entities";
 
 @Injectable()
-export class SellerService {
+export class SellerService extends RepositoryService<SellerEntity> {
   constructor(
-    @InjectRepository(SellerEntity) private readonly sellerRepository: Repository<SellerEntity>,
+    @InjectRepository(SellerEntity) sellerRepository: Repository<SellerEntity>,
     @Inject(NATS_CLIENT) private readonly natsClient: ClientProxy,
     private readonly userClientService: UserClientService,
     private readonly i18nService: I18nService,
-  ) {}
+  ) {
+    super(sellerRepository);
+  }
 
-  async create(userId: string, data: CreateSellerDto): Promise<SellerVM> {
-    const createdSeller = this.sellerRepository.create({
+  async createSellerAndSync(userId: string, data: CreateSellerDto): Promise<SellerVM> {
+    const createdSeller = this.create({
       userId,
       ...data,
     });
@@ -33,15 +36,11 @@ export class SellerService {
       },
     });
 
-    return await this.sellerRepository.save(createdSeller);
-  }
-
-  async get(filter: FindOptionsWhere<SellerEntity>, select?: (keyof SellerEntity)[]): Promise<SellerVM | null> {
-    return await this.sellerRepository.findOne({ where: filter, select });
+    return createdSeller;
   }
 
   async getSellers(userId?: string): Promise<Array<SellerVM | SellerDetailVM>> {
-    const sellers = await this.sellerRepository.find({ where: userId ? { userId } : {} });
+    const sellers = await this.getMultiple([{ userId }, {}]);
 
     if (!userId) return sellers;
     if (sellers.length === 0) return [];
@@ -60,19 +59,13 @@ export class SellerService {
     });
   }
 
-  async update(filter: FindOptionsWhere<SellerEntity>, updates: UpdateSellerDto): Promise<SellerVM> {
-    const seller = await this.sellerRepository.findOneBy(filter);
+  async authUpdate(userId: string, id: string, updates: UpdateSellerDto): Promise<SellerVM> {
+    const seller = await this.getOrThrow({ id }, { select: ["userId"] });
 
-    if (!seller) throw new NotFoundException(this.i18nService.t("seller.not-found"));
+    if (seller.userId !== userId) {
+      throw new ForbiddenException(this.i18nService.t("seller.forbidden-update"));
+    }
 
-    return this.sellerRepository.save({ ...seller, ...updates });
-  }
-
-  async delete(filter: FindOptionsWhere<SellerEntity>): Promise<void> {
-    const seller = await this.sellerRepository.findOne({ where: filter, select: ["id"] });
-
-    if (!seller) throw new NotFoundException(this.i18nService.t("seller.not-found"));
-
-    await this.sellerRepository.delete(seller.id);
+    return (await this.update({ id, userId }, updates))!;
   }
 }

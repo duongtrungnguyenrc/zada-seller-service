@@ -34,7 +34,7 @@ import { SellerService } from "./seller.service";
 export class SellerController {
   constructor(
     private readonly sellerService: SellerService,
-    private readonly i18n: I18nService,
+    private readonly i18nService: I18nService,
   ) {}
 
   @Post()
@@ -43,23 +43,22 @@ export class SellerController {
   @ApiBody({ type: CreateSellerDto })
   @ApiCreatedResponse({ type: SellerResponseVM })
   @ApiBadRequestResponse({ description: "Validation failed", type: BadRequestExceptionVM })
-  @ApiUnauthorizedResponse({ description: "Unauthorized", type: UnauthorizedExceptionVM })
+  @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   async create(@AuthTokenPayload("sub") userId: string, @Body() data: CreateSellerDto): Promise<SellerResponseVM> {
-    const created = await this.sellerService.create(userId, data);
+    const created = await this.sellerService.createSellerAndSync(userId, data);
 
-    return HttpResponse.created(this.i18n.t("seller.create-success"), created);
+    return HttpResponse.created(this.i18nService.t("seller.create-success"), created);
   }
 
-  @Get()
-  @ApiOperation({ summary: "Get all sellers of seller" })
+  @Get("own")
+  @ApiOperation({ summary: "Get all user sellers" })
   @ApiBearerAuth()
-  @ApiOkResponse({
-    type: SellerDetailsResponseVM,
-  })
+  @ApiOkResponse({ description: "Get user sellers sucess", type: SellerDetailsResponseVM })
+  @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   async getSellers(@AuthTokenPayload("sub") userId: string): Promise<SellerDetailsResponseVM> {
     const sellers = await this.sellerService.getSellers(userId);
 
-    return HttpResponse.ok(this.i18n.t("seller.fetch-success"), sellers);
+    return HttpResponse.ok(this.i18nService.t("seller.fetch-success"), sellers);
   }
 
   @Put(":id")
@@ -69,13 +68,13 @@ export class SellerController {
   @ApiBody({ type: UpdateSellerDto })
   @ApiOkResponse({ type: SellerResponseVM })
   @ApiBadRequestResponse({ description: "Validation failed", type: BadRequestExceptionVM })
-  @ApiUnauthorizedResponse({ description: "Unauthorized", type: UnauthorizedExceptionVM })
+  @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   @ApiForbiddenResponse({ description: "Forbidden to update", type: ForbiddenExceptionVM })
   @ApiNotFoundResponse({ description: "Seller not found", type: NotFoundExceptionVM })
-  async update(@AuthTokenPayload("sub") userId: string, @Param("id") id: string, @Body() dto: UpdateSellerDto): Promise<SellerResponseVM> {
-    const updated = await this.sellerService.update({ id, userId }, dto);
+  async update(@AuthTokenPayload("sub") userId: string, @Param("id") id: string, @Body() data: UpdateSellerDto): Promise<SellerResponseVM> {
+    const updated = await this.sellerService.authUpdate(userId, id, data);
 
-    return HttpResponse.ok(this.i18n.t("seller.update-success"), updated);
+    return HttpResponse.ok(this.i18nService.t("seller.update-success"), updated);
   }
 
   @Delete(":id")
@@ -83,12 +82,12 @@ export class SellerController {
   @ApiBearerAuth()
   @ApiParam({ name: "id", description: "Seller UUID" })
   @ApiOkResponse({ type: ResponseVM })
-  @ApiUnauthorizedResponse({ description: "Unauthorized", type: UnauthorizedExceptionVM })
+  @ApiUnauthorizedResponse({ description: "Missing auth token", type: UnauthorizedExceptionVM })
   @ApiForbiddenResponse({ description: "Forbidden to delete", type: ForbiddenExceptionVM })
   @ApiNotFoundResponse({ description: "Seller not found", type: NotFoundExceptionVM })
   async delete(@AuthTokenPayload("sub") userId: string, @Param("id") id: string): Promise<ResponseVM> {
-    await this.sellerService.delete({ userId, id });
+    await this.sellerService.deleteOrThrow({ userId, id }, this.i18nService.t("seller.not-found"));
 
-    return HttpResponse.ok(this.i18n.t("seller.delete-success"));
+    return HttpResponse.ok(this.i18nService.t("seller.delete-success"));
   }
 }

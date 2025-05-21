@@ -2,6 +2,7 @@
   "create-success": "Seller created successfully.",
   "fetch-success": "Fetched seller list successfully.",
   "update-success": "Seller updated successfully.",
+  "forbidden-delete": "You do not have permission to delete this seller.",
   "delete-success": "Seller deleted successfully.",
   "not-found": "Seller not found."
 }

@@ -2,6 +2,7 @@
   "create-success": "Tạo cửa hàng thành công.",
   "fetch-success": "Lấy danh sách cửa hàng thành công.",
   "update-success": "Cập nhật cửa hàng thành công.",
+  "forbidden-delete": "Bạn không có quyền xoá cửa hàng này.",
   "delete-success": "Xóa cửa hàng thành công.",
   "not-found": "Cửa hàng không tồn tại."
 }

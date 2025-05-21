@@ -6,7 +6,6 @@ import * as path from "path";
 
 import { NatsClientModule } from "~nats-client";
 import { UserClientModule } from "~user-client";
-import { RatingModule } from "~rating";
 import { SellerModule } from "~seller";
 
 @Module({
@@ -36,7 +35,6 @@ import { SellerModule } from "~seller";
     NatsClientModule,
     UserClientModule,
     SellerModule,
-    RatingModule,
   ],
 })
 export class AppModule {}

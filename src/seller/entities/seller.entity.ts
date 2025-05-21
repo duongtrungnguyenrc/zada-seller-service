@@ -1,6 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-
-import { RatingEntity, IRating } from "~rating";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 import { ISeller } from "../interfaces";
 
@@ -35,7 +33,4 @@ export class SellerEntity implements ISeller {
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
-
-  @OneToMany(() => RatingEntity, (rating) => rating.seller)
-  ratings: IRating[];
 }
